@@ -1,21 +1,60 @@
 import './style';
 import './goban.css'
-
+import {Component, render} from "preact";
+import {Goban} from "@sabaki/shudan";
 const {h} = require('preact')
-const {Goban} = require('@sabaki/shudan')
+const Board = require('@sabaki/go-board')
 
-let signMap=[
-	[1,0],
-	[0,-1]
-];
+//
+class App extends Component {
+	constructor(props) {
+		super(props);
 
-const CustomComponent = props => (
-	// <Goban vertexSize={24} signMap={props.signMap} />
-	<Goban vertexSize={24} signMap={signMap} />
-)
+		this.state = {
+			board: new Board([
+				[1,0],
+				[0,-1]
+			]),
+			vertexSize: 24
+		}
+	}
+	render() {
+		let {
+			vertexSize,
+			// showCoordinates,
+			// alternateCoordinates,
+			// showCorner,
+			// showDimmedStones,
+			// fuzzyStonePlacement,
+			// animateStonePlacement,
+			// showPaintMap,
+			// showHeatMap,
+			// showMarkerMap,
+			// showGhostStones,
+			// showLines,
+			// showSelection
+		} = this.state
 
-export default function App() {
-	return (
-		<CustomComponent />
-	);
+		return h(Goban,{
+			vertexSize,
+			signMap: this.state.board.signMap,
+			onVertexClick: (evt, [x,y]) => {
+				let newBoard = this.state.board.makeMove(1, [x,y]);
+				this.setState({board:newBoard})
+			}
+		})
+	}
+	// return (
+	// 	<Goban
+	// 		id={"mainGoban"}
+	// 		vertexSize={24}
+	// 		signMap={board.signMap}
+	// 		onVertexClick = (evt, vertex) => {
+	// 			let newBoard = board.makeMove(1, vertex);
+	//
+	// 		}
+	// 	/>
+	// );
 }
+
+render(<App />, document.body);
