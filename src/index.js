@@ -9,29 +9,11 @@ const sgf = require('@sabaki/sgf')
 const {h} = require('preact')
 const Board = require('@sabaki/go-board')
 
-const finalBoardSignMap = [
-    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 1, 1, -1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 1, 0, -1, -1, 0, 0, 0, -1, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-];
+// карта для финальной позиции
+let finalBoard = new Board([...Array(19)].map(() => Array(19).fill(0)));
 
-const markerMap = [...Array(19)].map(() => Array(19));
+// карта для текущих ходов
+let currentBoard = new Board([...Array(19)].map(() => Array(19).fill(0)));
 
 // просто пример джосеки
 const content = "(;GM[1]FF[4]\n" +
@@ -44,6 +26,7 @@ const content = "(;GM[1]FF[4]\n" +
     ";W[df]\n" +
     ";B[fc]\n" +
     ";W[dj])\n";
+
 const rootNodes = sgf.parse(content)
 rootNodes.toString();
 let steps = []
@@ -56,7 +39,7 @@ function decodeCrdFromSgf(crd) {
     if (crd.length !== 2) throw "crd format is not SGF";
     let y = crd.charCodeAt(0) - a_char_code;
     let x = crd.charCodeAt(1) - a_char_code;
-    return {x, y};
+    return [x, y];
 }
 
 while (pointer !== undefined) {
@@ -79,6 +62,19 @@ while (pointer !== undefined) {
     }
 }
 
+let index = 0;
+let sign = 1;
+
+// проигрываем ходы джосеке. первые три на текущей доске, все - на финальной
+for(let i = 0; i < steps.length; ++i) {
+    if(i < 3) {
+        currentBoard = currentBoard.makeMove(sign, steps[i]);
+        index++;
+    }
+    finalBoard = finalBoard.makeMove(sign, steps[i]);
+    sign = -sign;
+}
+
 class App extends Component {
     constructor(props) {
         super(props);
@@ -86,9 +82,10 @@ class App extends Component {
         this.state = {
             vertexSize: 32,
             showCorner: true,
-            index: 0, // index of next pressed stone
-            board: new Board(finalBoardSignMap),
-            markers: markerMap,
+            index, // index of next pressed stone
+            sign: -1, // color of the next stone (1 - black, -1 - white)
+            finalBoard,
+            currentBoard,
         }
     }
 
@@ -96,9 +93,9 @@ class App extends Component {
         let {
             vertexSize,
             showCorner,
-            index
+            index,
+            sign
         } = this.state
-        // ,
 
         return h(
             "div",
@@ -106,11 +103,12 @@ class App extends Component {
             h(
                 'div',
                 {style: "margin:21px; font-size:large"},
-                "Попытайся восстановить последовательность этого розыгрыша. Начни с хода C16."
+                "Попытайся восстановить последовательность этого розыгрыша."
             ),
             h(
                 'div',
                 {},
+                // тут играем
                 h(Goban, {
                     innerProps: {
                         onContextMenu: evt => evt.preventDefault()
@@ -119,22 +117,17 @@ class App extends Component {
                     rangeX: showCorner ? [0, 10] : undefined,
                     rangeY: showCorner ? [0, 10] : undefined,
 
-                    signMap: this.state.board.signMap,
-                    markerMap: this.state.markers,
+                    signMap: this.state.currentBoard.signMap,
                     showCoordinates: true,
                     onVertexMouseUp: (evt, [x, y]) => {
-                        if (steps[index].x === x &&
-                            steps[index].y === y) {
+                        if (steps[index][0] === x &&
+                            steps[index][1] === y) {
                             // correct answer
-                            let newMarkerMap = this.state.markers.map((a) => {
-                                return a.slice();
-                            })
-                            newMarkerMap[y][x] = {type: 'label', label: (index + 1).toString()}
                             index++;
                             this.setState({
-                                board: this.state.board,
-                                markers: newMarkerMap,
-                                index
+                                currentBoard: this.state.currentBoard.makeMove(sign, [x, y]),
+                                index,
+                                sign: -sign
                             })
                             if (index === steps.length) {
                                 setTimeout(() => {
@@ -143,23 +136,24 @@ class App extends Component {
                             }
                         } else {
                             alert("incorrect");
-                            this.setState(
-                                {
-                                    board: this.state.board,
-                                    markers: markerMap,
-                                    index: 0
-                                }
-                            )
+                            this.setState({
+                                currentBoard,
+                                index: 3,
+                                sign:-1
+                            })
                         }
-
-
-                        // console.log(evt.button);
-                        // let sign = evt.button === 0 ? 1 : -1
-                        // let newBoard = this.state.board.makeMove(sign, [x, y]);
-                        // this.setState({board: newBoard})
-
-
                     }
+                }),
+                // тут просто показываем последнюю позицию
+                h(Goban, {
+                    innerProps: {
+                        onContextMenu: evt => evt.preventDefault()
+                    },
+                    vertexSize,
+                    rangeX: showCorner ? [0, 10] : undefined,
+                    rangeY: showCorner ? [0, 10] : undefined,
+                    signMap: this.state.finalBoard.signMap,
+                    showCoordinates: true,
                 })
             )
         )

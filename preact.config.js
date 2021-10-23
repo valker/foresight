@@ -6,5 +6,5 @@ export default (config, env, helpers) => {
     // babelConfig.env = {
     //     // ...some settings...
     // }
-    config.resolve.alias.fs = "null";
+    // config.resolve.alias.fs = "null";
 };
