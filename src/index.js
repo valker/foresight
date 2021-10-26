@@ -4,19 +4,13 @@ import {Component, render} from "preact";
 import {Goban} from "@sabaki/shudan";
 
 const sgf = require('@sabaki/sgf')
-
-
 const {h} = require('preact')
 const Board = require('@sabaki/go-board')
 
-// карта для финальной позиции
-let finalBoard = new Board([...Array(19)].map(() => Array(19).fill(0)));
-
-// карта для текущих ходов
-let currentBoard = new Board([...Array(19)].map(() => Array(19).fill(0)));
-
-// просто пример джосеки
-const content = "(;GM[1]FF[4]\n" +
+// просто пример джосек
+// в дальнейшем, надо придумать способ хранить их на сайте.. хотя..
+const content = [
+    "(;GM[1]FF[4]\n" +
     "SZ[19]\n" +
     ";B[dc]\n" +
     ";W[de]\n" +
@@ -25,16 +19,32 @@ const content = "(;GM[1]FF[4]\n" +
     ";B[cd]\n" +
     ";W[df]\n" +
     ";B[fc]\n" +
-    ";W[dj])\n";
+    ";W[dj])\n"
+    ,
+    "(;GM[1]FF[4]\n" +
+    "SZ[19]\n" +
+    ";B[dd]\n" +
+    ";W[cc]\n" +
+    ";B[cd]\n" +
+    ";W[dc]\n" +
+    ";B[ec]\n" +
+    ";W[eb]\n" +
+    ";B[fb]\n" +
+    ";W[fc]\n" +
+    ";B[ed]\n" +
+    ";W[gb]\n" +
+    ";B[db]\n" +
+    ";W[fa]\n" +
+    ";B[cb])\n"
 
-const rootNodes = sgf.parse(content)
-rootNodes.toString();
+    // сюда можно положить больше джосек
+];
 
 const a_char_code = 'a'.charCodeAt(0);
 
 
 /**
- * Decodes coordinates from SGF format to 1D array of 2 numbers [x,y]
+ * Декодируем координаты из формата SGF в одномерный массив из 2х чисел [x,y]
  * @param crd - coordinates in SGF format. For ex. "dg"
  * @returns {number[]}
  */
@@ -47,7 +57,7 @@ function decodeCrdFromSgf(crd) {
 }
 
 /**
- * Extract coordinates from pointer to SGF node (if exists)
+ * Извлекаем координаты из узла SGF
  * @param pointer - pointer to SGF node
  * @returns {undefined|string}
  */
@@ -67,7 +77,7 @@ function pointerToCrd(pointer) {
 }
 
 /**
- * Converts SGF nodes to array of moves
+ * Конвертируем список SGF узлов в массив ходов
  * @param nodes
  * @returns {number[][]} - sequence of moves
  */
@@ -92,35 +102,55 @@ function sgfToSteps(nodes) {
     return steps;
 }
 
-const steps = sgfToSteps(rootNodes);
+const initialMessage = "Попытайся восстановить последовательность этого розыгрыша";
 
-let index = 0;
-let sign = 1;
+function initializeJoseki(joseki_index) {
+    const rootNodes = sgf.parse(content[joseki_index])
+    const steps = sgfToSteps(rootNodes);
 
-for(let i = 0; i < steps.length; ++i) {
-    if(i < 3) {
-        currentBoard = currentBoard.makeMove(sign, steps[i]);
-        index++;
+    let index = 0;
+    let sign = 1;
+
+    // карта для финальной позиции
+    let finalBoard = new Board([...Array(19)].map(() => Array(19).fill(0)));
+
+    // карта для текущих ходов
+    let currentBoard = new Board([...Array(19)].map(() => Array(19).fill(0)));
+
+    for(let i = 0; i < steps.length; ++i) {
+        if(i < 3) {
+            currentBoard = currentBoard.makeMove(sign, steps[i]);
+            index++;
+        }
+        finalBoard = finalBoard.makeMove(sign, steps[i]);
+        sign = -sign;
     }
-    finalBoard = finalBoard.makeMove(sign, steps[i]);
-    sign = -sign;
+
+    return {steps, index, sign, currentBoard, finalBoard};
 }
 
-const initialMessage = "Попытайся восстановить последовательность этого розыгрыша";
+const constantState = {
+    message: initialMessage,
+    vertexSize: 32,
+    showCorner: true,
+    sign: -1, // цвет следующего камня (1 - чёрный, -1 - белый)
+};
 
 class App extends Component {
     constructor(props) {
         super(props);
 
-        this.state = {
-            vertexSize: 32,
-            showCorner: true,
-            index, // index of next pressed stone
-            sign: -1, // color of the next stone (1 - black, -1 - white)
-            finalBoard,
-            currentBoard,
-            message: initialMessage
-        }
+        let joseki_index = 0;
+
+        let initialState = initializeJoseki(joseki_index);
+
+        this.state = Object.assign({},
+            initialState,
+            constantState,
+            {
+                joseki_index,
+                initialBoard: initialState.currentBoard
+            });
     }
 
     render() {
@@ -138,6 +168,7 @@ class App extends Component {
                             showCoordinates={true}
                             onVertexClick={ (evt, [x,y]) => {
                                 let index = this.state.index;
+                                let steps = this.state.steps;
                                 if (steps[index][0] === x &&
                                     steps[index][1] === y) {
                                     // correct answer
@@ -151,18 +182,36 @@ class App extends Component {
                                     if (index === steps.length) {
                                         setTimeout(() => {
                                             this.setState({message:"Верно!"})
+                                            setTimeout(() => {
+                                                if(this.state.joseki_index < content.length - 1) {
+                                                    let joseki_index = this.state.joseki_index + 1;
+                                                    let newState = initializeJoseki(joseki_index);
+                                                    this.setState(Object.assign({},
+                                                        newState,
+                                                        constantState,
+                                                        {
+                                                            joseki_index,
+                                                            message:"Следующая задача",
+                                                            initialBoard: newState.currentBoard
+                                                        }));
+                                                    setTimeout(() => {
+                                                        this.setState({ message: initialMessage})
+                                                    }, 1000)
+                                                } else {
+                                                    this.setState({message: "Задачи на сегодня закончились"});
+                                                }
+                                            }, 1000);
                                         }, 300);
                                     }
                                 } else {
                                     this.setState({
-                                        currentBoard,
+                                        currentBoard: this.state.initialBoard,
                                         index: 3,
                                         sign: -1,
                                         message: "Неверно!"
                                     })
-                                    setTimeout( () => this.setState({message:initialMessage}), 1000)
+                                    setTimeout(() => this.setState({message:initialMessage}), 1000);
                                 }
-
                             }}
                         />
                     </div>
