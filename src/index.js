@@ -106,6 +106,8 @@ for(let i = 0; i < steps.length; ++i) {
     sign = -sign;
 }
 
+const initialMessage = "Попытайся восстановить последовательность этого розыгрыша";
+
 class App extends Component {
     constructor(props) {
         super(props);
@@ -117,13 +119,14 @@ class App extends Component {
             sign: -1, // color of the next stone (1 - black, -1 - white)
             finalBoard,
             currentBoard,
+            message: initialMessage
         }
     }
 
     render() {
         return (
             <div>
-                <div style={"margin:21px; font-size:large"}>Попытайся восстановить последовательность этого розыгрыша</div>
+                <div style={"margin:21px; font-size:large"}>{this.state.message}</div>
                 <div>
                     <div style={"margin:10px"}>
                         <Goban
@@ -147,16 +150,17 @@ class App extends Component {
                                     })
                                     if (index === steps.length) {
                                         setTimeout(() => {
-                                            alert("done!");
+                                            this.setState({message:"Верно!"})
                                         }, 300);
                                     }
                                 } else {
-                                    alert("incorrect");
                                     this.setState({
                                         currentBoard,
                                         index: 3,
-                                        sign: -1
+                                        sign: -1,
+                                        message: "Неверно!"
                                     })
+                                    setTimeout( () => this.setState({message:initialMessage}), 1000)
                                 }
 
                             }}
