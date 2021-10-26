@@ -1,6 +1,6 @@
 {
   "name": "foresight",
-  "short_name": "4sight",
+  "short_name": "foresight",
   "start_url": "/",
   "display": "standalone",
   "orientation": "portrait",

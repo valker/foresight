@@ -29,11 +29,15 @@ const content = "(;GM[1]FF[4]\n" +
 
 const rootNodes = sgf.parse(content)
 rootNodes.toString();
-let steps = []
-let pointer = rootNodes[0];
 
 const a_char_code = 'a'.charCodeAt(0);
 
+
+/**
+ * Decodes coordinates from SGF format to 1D array of 2 numbers [x,y]
+ * @param crd - coordinates in SGF format. For ex. "dg"
+ * @returns {number[]}
+ */
 function decodeCrdFromSgf(crd) {
     crd = crd.toString();
     if (crd.length !== 2) throw "crd format is not SGF";
@@ -42,30 +46,57 @@ function decodeCrdFromSgf(crd) {
     return [x, y];
 }
 
-while (pointer !== undefined) {
-    let crd;
-    if (pointer.data.B !== undefined) {
-        crd = pointer.data.B;
-    } else if (pointer.data.W !== undefined) {
-        crd = pointer.data.W;
+/**
+ * Extract coordinates from pointer to SGF node (if exists)
+ * @param pointer - pointer to SGF node
+ * @returns {undefined|string}
+ */
+function pointerToCrd(pointer) {
+
+    let b = pointer.data.B;
+    if (b !== undefined) {
+        return b;
     }
 
-    if (crd !== undefined) {
-        crd = decodeCrdFromSgf(crd);
-        steps.push(crd);
+    let w = pointer.data.W;
+    if (w !== undefined) {
+        return w;
     }
 
-    if (pointer.children !== undefined) {
-        pointer = pointer.children[0];
-    } else {
-        pointer = undefined;
-    }
+    return undefined;
 }
+
+/**
+ * Converts SGF nodes to array of moves
+ * @param nodes
+ * @returns {number[][]} - sequence of moves
+ */
+function sgfToSteps(nodes) {
+    let steps = []
+    let pointer = nodes[0];
+    while (pointer !== undefined) {
+        let crd = pointerToCrd(pointer);
+
+        if (crd !== undefined) {
+            crd = decodeCrdFromSgf(crd);
+            steps.push(crd);
+        }
+
+        if (pointer.children !== undefined) {
+            pointer = pointer.children[0];
+        } else {
+            pointer = undefined;
+        }
+    }
+
+    return steps;
+}
+
+const steps = sgfToSteps(rootNodes);
 
 let index = 0;
 let sign = 1;
 
-// проигрываем ходы джосеке. первые три на текущей доске, все - на финальной
 for(let i = 0; i < steps.length; ++i) {
     if(i < 3) {
         currentBoard = currentBoard.makeMove(sign, steps[i]);
@@ -90,73 +121,60 @@ class App extends Component {
     }
 
     render() {
-        let {
-            vertexSize,
-            showCorner,
-            index,
-            sign
-        } = this.state
+        return (
+            <div>
+                <div style={"margin:21px; font-size:large"}>Попытайся восстановить последовательность этого розыгрыша</div>
+                <div>
+                    <div style={"margin:10px"}>
+                        <Goban
+                            innerProps={oncontextmenu= evt=>evt.preventDefault()}
+                            vertexSize={this.state.vertexSize}
+                            rangeX={this.state.showCorner ? [0,10]:undefined }
+                            rangeY={this.state.showCorner ? [0,10]:undefined }
+                            signMap={this.state.currentBoard.signMap}
+                            showCoordinates={true}
+                            onVertexClick={ (evt, [x,y]) => {
+                                let index = this.state.index;
+                                if (steps[index][0] === x &&
+                                    steps[index][1] === y) {
+                                    // correct answer
+                                    index++;
+                                    const sign = this.state.sign;
+                                    this.setState({
+                                        currentBoard: this.state.currentBoard.makeMove(sign, [x, y]),
+                                        index,
+                                        sign: -sign
+                                    })
+                                    if (index === steps.length) {
+                                        setTimeout(() => {
+                                            alert("done!");
+                                        }, 300);
+                                    }
+                                } else {
+                                    alert("incorrect");
+                                    this.setState({
+                                        currentBoard,
+                                        index: 3,
+                                        sign: -1
+                                    })
+                                }
 
-        return h(
-            "div",
-            null,
-            h(
-                'div',
-                {style: "margin:21px; font-size:large"},
-                "Попытайся восстановить последовательность этого розыгрыша."
-            ),
-            h(
-                'div',
-                {},
-                // тут играем
-                h(Goban, {
-                    innerProps: {
-                        onContextMenu: evt => evt.preventDefault()
-                    },
-                    vertexSize,
-                    rangeX: showCorner ? [0, 10] : undefined,
-                    rangeY: showCorner ? [0, 10] : undefined,
-
-                    signMap: this.state.currentBoard.signMap,
-                    showCoordinates: true,
-                    onVertexMouseUp: (evt, [x, y]) => {
-                        if (steps[index][0] === x &&
-                            steps[index][1] === y) {
-                            // correct answer
-                            index++;
-                            this.setState({
-                                currentBoard: this.state.currentBoard.makeMove(sign, [x, y]),
-                                index,
-                                sign: -sign
-                            })
-                            if (index === steps.length) {
-                                setTimeout(() => {
-                                    alert("done!");
-                                }, 300);
-                            }
-                        } else {
-                            alert("incorrect");
-                            this.setState({
-                                currentBoard,
-                                index: 3,
-                                sign:-1
-                            })
-                        }
-                    }
-                }),
-                // тут просто показываем последнюю позицию
-                h(Goban, {
-                    innerProps: {
-                        onContextMenu: evt => evt.preventDefault()
-                    },
-                    vertexSize,
-                    rangeX: showCorner ? [0, 10] : undefined,
-                    rangeY: showCorner ? [0, 10] : undefined,
-                    signMap: this.state.finalBoard.signMap,
-                    showCoordinates: true,
-                })
-            )
-        )
+                            }}
+                        />
+                    </div>
+                    <div style={"margin:10px"}>
+                        <Goban
+                            innerProps={oncontextmenu = evt => evt.preventDefault()}
+                            vertexSize={this.state.vertexSize}
+                            rangeX={this.state.showCorner ? [0, 10] : undefined}
+                            rangeY={this.state.showCorner ? [0, 10] : undefined}
+                            signMap={this.state.finalBoard.signMap}
+                            showCoordinates={true}
+                        />
+                    </div>
+                </div>
+            </div>
+        );
     }
 }
 
