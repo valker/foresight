@@ -2,10 +2,7 @@ import './style';
 import './goban.css'
 import {Component, render} from "preact";
 import {Goban} from "@sabaki/shudan";
-
-const sgf = require('@sabaki/sgf')
-const {h} = require('preact')
-const Board = require('@sabaki/go-board')
+import {initializeJoseki} from "./util.js"
 
 // просто пример джосек
 // в дальнейшем, надо придумать способ хранить их на сайте.. хотя..
@@ -40,94 +37,7 @@ const content = [
     // сюда можно положить больше джосек
 ];
 
-const a_char_code = 'a'.charCodeAt(0);
-
-
-/**
- * Декодируем координаты из формата SGF в одномерный массив из 2х чисел [x,y]
- * @param crd - coordinates in SGF format. For ex. "dg"
- * @returns {number[]}
- */
-function decodeCrdFromSgf(crd) {
-    crd = crd.toString();
-    if (crd.length !== 2) throw "crd format is not SGF";
-    let y = crd.charCodeAt(0) - a_char_code;
-    let x = crd.charCodeAt(1) - a_char_code;
-    return [x, y];
-}
-
-/**
- * Извлекаем координаты из узла SGF
- * @param pointer - pointer to SGF node
- * @returns {undefined|string}
- */
-function pointerToCrd(pointer) {
-
-    let b = pointer.data.B;
-    if (b !== undefined) {
-        return b;
-    }
-
-    let w = pointer.data.W;
-    if (w !== undefined) {
-        return w;
-    }
-
-    return undefined;
-}
-
-/**
- * Конвертируем список SGF узлов в массив ходов
- * @param nodes
- * @returns {number[][]} - sequence of moves
- */
-function sgfToSteps(nodes) {
-    let steps = []
-    let pointer = nodes[0];
-    while (pointer !== undefined) {
-        let crd = pointerToCrd(pointer);
-
-        if (crd !== undefined) {
-            crd = decodeCrdFromSgf(crd);
-            steps.push(crd);
-        }
-
-        if (pointer.children !== undefined) {
-            pointer = pointer.children[0];
-        } else {
-            pointer = undefined;
-        }
-    }
-
-    return steps;
-}
-
 const initialMessage = "Попытайся восстановить последовательность этого розыгрыша";
-
-function initializeJoseki(joseki_index) {
-    const rootNodes = sgf.parse(content[joseki_index])
-    const steps = sgfToSteps(rootNodes);
-
-    let index = 0;
-    let sign = 1;
-
-    // карта для финальной позиции
-    let finalBoard = new Board([...Array(19)].map(() => Array(19).fill(0)));
-
-    // карта для текущих ходов
-    let currentBoard = new Board([...Array(19)].map(() => Array(19).fill(0)));
-
-    for(let i = 0; i < steps.length; ++i) {
-        if(i < 3) {
-            currentBoard = currentBoard.makeMove(sign, steps[i]);
-            index++;
-        }
-        finalBoard = finalBoard.makeMove(sign, steps[i]);
-        sign = -sign;
-    }
-
-    return {steps, index, sign, currentBoard, finalBoard};
-}
 
 const constantState = {
     message: initialMessage,
@@ -142,7 +52,7 @@ class App extends Component {
 
         let joseki_index = 0;
 
-        let initialState = initializeJoseki(joseki_index);
+        let initialState = initializeJoseki(content[joseki_index]);
 
         this.state = Object.assign({},
             initialState,
@@ -171,7 +81,7 @@ class App extends Component {
                                 let steps = this.state.steps;
                                 if (steps[index][0] === x &&
                                     steps[index][1] === y) {
-                                    // correct answer
+                                    // правильный ответ
                                     index++;
                                     const sign = this.state.sign;
                                     this.setState({
@@ -185,7 +95,7 @@ class App extends Component {
                                             setTimeout(() => {
                                                 if(this.state.joseki_index < content.length - 1) {
                                                     let joseki_index = this.state.joseki_index + 1;
-                                                    let newState = initializeJoseki(joseki_index);
+                                                    let newState = initializeJoseki(content[joseki_index]);
                                                     this.setState(Object.assign({},
                                                         newState,
                                                         constantState,
@@ -204,6 +114,8 @@ class App extends Component {
                                         }, 300);
                                     }
                                 } else {
+                                    // неправильный ответ
+                                    // сбрасываем состояние на начальное
                                     this.setState({
                                         currentBoard: this.state.initialBoard,
                                         index: 3,
@@ -216,6 +128,7 @@ class App extends Component {
                         />
                     </div>
                     <div style={"margin:10px"}>
+                        {/*просто показываем финальное состояние джосеки, не обрабатывая нажатия*/}
                         <Goban
                             innerProps={oncontextmenu = evt => evt.preventDefault()}
                             vertexSize={this.state.vertexSize}
