@@ -3,39 +3,46 @@ import './goban.css'
 import {Component, render} from "preact";
 import {Goban} from "@sabaki/shudan";
 import {initializeJoseki} from "./util.js"
+import {parse} from "@sabaki/sgf";
 
 // просто пример джосек
 // в дальнейшем, надо придумать способ хранить их на сайте.. хотя..
 const content = [
-    "(;GM[1]FF[4]\n" +
-    "SZ[19]\n" +
-    ";B[dc]\n" +
-    ";W[de]\n" +
-    ";B[ce]\n" +
-    ";W[cf]\n" +
-    ";B[cd]\n" +
-    ";W[df]\n" +
-    ";B[fc]\n" +
-    ";W[dj])\n"
-    ,
-    "(;GM[1]FF[4]\n" +
-    "SZ[19]\n" +
-    ";B[dd]\n" +
-    ";W[cc]\n" +
-    ";B[cd]\n" +
-    ";W[dc]\n" +
-    ";B[ec]\n" +
-    ";W[eb]\n" +
-    ";B[fb]\n" +
-    ";W[fc]\n" +
-    ";B[ed]\n" +
-    ";W[gb]\n" +
-    ";B[db]\n" +
-    ";W[fa]\n" +
-    ";B[cb])\n"
+    // "(;GM[1]FF[4]\n" +
+    // "SZ[19]\n" +
+    // ";B[dc]\n" +
+    // ";W[de]\n" +
+    // ";B[ce]\n" +
+    // ";W[cf]\n" +
+    // ";B[cd]\n" +
+    // ";W[df]\n" +
+    // ";B[fc]\n" +
+    // ";W[dj])\n"
+    // ,
+    // "(;GM[1]FF[4]\n" +
+    // "SZ[19]\n" +
+    // ";B[dd]\n" +
+    // ";W[cc]\n" +
+    // ";B[cd]\n" +
+    // ";W[dc]\n" +
+    // ";B[ec]\n" +
+    // ";W[eb]\n" +
+    // ";B[fb]\n" +
+    // ";W[fc]\n" +
+    // ";B[ed]\n" +
+    // ";W[gb]\n" +
+    // ";B[db]\n" +
+    // ";W[fa]\n" +
+    // ";B[cb])\n" +
 
     // сюда можно положить больше джосек
+    "(;\n" +
+    "GM[1]FF[4]SZ[19];\n" +
+    "B[dp];\n" +
+    "W[fq](;B[cn];W[dq];B[cq];W[cr];B[eq];W[dr](;B[ep];W[er](;B[bq](;W[fp])(;W[hq]))(;B[fp];W[gq]))(;B[fp];W[er];B[ep];W[gq])(;B[er](;W[ep];B[fr];W[cp];B[do];W[bp];B[gq])(;W[cp];B[ep];W[co](;B[dn])(;B[do];W[bq];B[bo];W[bp](;B[dm])(;B[dn])))))(;B[hq];W[cq];B[dq];W[cp];B[do];W[dr];B[er];W[cr];B[fr];W[cn]))"
 ];
+
+
 
 const initialMessage = "Попытайся восстановить последовательность этого розыгрыша";
 

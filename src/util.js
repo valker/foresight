@@ -3,6 +3,19 @@ const Board = require("@sabaki/go-board");
 
 const a_char_code = 'a'.charCodeAt(0);
 
+export function searchBranches(cnt)
+{
+    let josekis = []; // каждая джосеки - это последовательность ходов Ч-Б-Ч-Б..., где каждый ход это объект {x,y}
+
+    let childToParentMap = new Map();
+
+    for(let i = 0; i < cnt.length; ++i) {
+        let nodes = parse(cnt[i]);
+    }
+
+    return josekis;
+}
+
 /**
  * Декодируем координаты из формата SGF в одномерный массив из 2х чисел [x,y]
  * @param crd - координаты в формате SGF. Например: "dg"
