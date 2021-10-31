@@ -1,7 +1,18 @@
+import collect from "collect.js";
+
 const {parse} = require("@sabaki/sgf");
 const Board = require("@sabaki/go-board");
 
-const a_char_code = 'a'.charCodeAt(0);
+function traverse(node, fn)
+{
+    let children = node.children;
+    if(!children) return;
+
+    for(let child of children) {
+        fn(child, node);
+        traverse(child, fn);
+    }
+}
 
 export function searchBranches(cnt)
 {
@@ -10,11 +21,39 @@ export function searchBranches(cnt)
     let childToParentMap = new Map();
 
     for(let i = 0; i < cnt.length; ++i) {
+
         let nodes = parse(cnt[i]);
+
+        // посетить все узлы и составить карту (ребёнок->родитель)
+        for(let ni = 0; ni < nodes.length; ++ni) {
+            traverse(nodes[ni], (child,parent)=>{childToParentMap.set(child,parent)});
+        }
+
+        // найти все листовые узлы - то есть такие, у которых нет детей
+        let leaves = collect(Array.from(childToParentMap.keys()))
+            .except(Array.from(childToParentMap.values()))
+            .toArray();
+
+        // для каждого листового узла пройтись до верха и построить путь
+        for(let leaf of leaves) {
+            let path = [];
+            while (leaf) {
+                path.push(leaf);
+                leaf = childToParentMap.get(leaf);
+            }
+
+            path.reverse();
+
+            let joseki = sgfToSteps(path);
+
+            josekis.push(joseki);
+        }
     }
 
     return josekis;
 }
+
+const a_char_code = 'a'.charCodeAt(0);
 
 /**
  * Декодируем координаты из формата SGF в одномерный массив из 2х чисел [x,y]
@@ -24,8 +63,8 @@ export function searchBranches(cnt)
 function decodeCrdFromSgf(crd) {
     crd = crd.toString();
     if (crd.length !== 2) throw "crd format is not SGF";
-    let y = crd.charCodeAt(0) - a_char_code;
-    let x = crd.charCodeAt(1) - a_char_code;
+    let x = crd.charCodeAt(0) - a_char_code;
+    let y = 18 - (crd.charCodeAt(1) - a_char_code);
     return [x, y];
 }
 
@@ -56,19 +95,13 @@ function pointerToCrd(pointer) {
  */
 function sgfToSteps(nodes) {
     let steps = []
-    let pointer = nodes[0];
-    while (pointer !== undefined) {
-        let crd = pointerToCrd(pointer);
+
+    for(let node of nodes) {
+        let crd = pointerToCrd(node);
 
         if (crd !== undefined) {
             crd = decodeCrdFromSgf(crd);
             steps.push(crd);
-        }
-
-        if (pointer.children !== undefined) {
-            pointer = pointer.children[0];
-        } else {
-            pointer = undefined;
         }
     }
 
@@ -81,8 +114,7 @@ function sgfToSteps(nodes) {
  * @returns {{finalBoard: GoBoard, sign: number, index: number, steps: number[][], currentBoard: GoBoard}}
  */
 export function initializeJoseki(joseki_content) {
-    const rootNodes = parse(joseki_content)
-    const steps = sgfToSteps(rootNodes);
+    const steps = joseki_content;
 
     let index = 0;
     let sign = 1;

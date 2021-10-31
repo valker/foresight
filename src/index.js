@@ -2,39 +2,11 @@ import './style';
 import './goban.css'
 import {Component, render} from "preact";
 import {Goban} from "@sabaki/shudan";
-import {initializeJoseki} from "./util.js"
-import {parse} from "@sabaki/sgf";
+import {initializeJoseki, searchBranches} from "./util.js"
 
 // просто пример джосек
 // в дальнейшем, надо придумать способ хранить их на сайте.. хотя..
 const content = [
-    // "(;GM[1]FF[4]\n" +
-    // "SZ[19]\n" +
-    // ";B[dc]\n" +
-    // ";W[de]\n" +
-    // ";B[ce]\n" +
-    // ";W[cf]\n" +
-    // ";B[cd]\n" +
-    // ";W[df]\n" +
-    // ";B[fc]\n" +
-    // ";W[dj])\n"
-    // ,
-    // "(;GM[1]FF[4]\n" +
-    // "SZ[19]\n" +
-    // ";B[dd]\n" +
-    // ";W[cc]\n" +
-    // ";B[cd]\n" +
-    // ";W[dc]\n" +
-    // ";B[ec]\n" +
-    // ";W[eb]\n" +
-    // ";B[fb]\n" +
-    // ";W[fc]\n" +
-    // ";B[ed]\n" +
-    // ";W[gb]\n" +
-    // ";B[db]\n" +
-    // ";W[fa]\n" +
-    // ";B[cb])\n" +
-
     // сюда можно положить больше джосек
     "(;\n" +
     "GM[1]FF[4]SZ[19];\n" +
@@ -43,6 +15,7 @@ const content = [
 ];
 
 
+const branches = searchBranches(content);
 
 const initialMessage = "Попытайся восстановить последовательность этого розыгрыша";
 
@@ -59,7 +32,7 @@ class App extends Component {
 
         let joseki_index = 0;
 
-        let initialState = initializeJoseki(content[joseki_index]);
+        let initialState = initializeJoseki(branches[joseki_index]);
 
         this.state = Object.assign({},
             initialState,
@@ -100,9 +73,9 @@ class App extends Component {
                                         setTimeout(() => {
                                             this.setState({message:"Верно!"})
                                             setTimeout(() => {
-                                                if(this.state.joseki_index < content.length - 1) {
+                                                if(this.state.joseki_index < branches.length - 1) {
                                                     let joseki_index = this.state.joseki_index + 1;
-                                                    let newState = initializeJoseki(content[joseki_index]);
+                                                    let newState = initializeJoseki(branches[joseki_index]);
                                                     this.setState(Object.assign({},
                                                         newState,
                                                         constantState,
