@@ -39,7 +39,8 @@ class App extends Component {
             constantState,
             {
                 joseki_index,
-                initialBoard: initialState.currentBoard
+                initialBoard: initialState.currentBoard,
+                currentBoardMarks: initialState.currentBoardMarks
             });
     }
 
@@ -55,10 +56,16 @@ class App extends Component {
                             rangeX={this.state.showCorner ? [0,10]:undefined }
                             rangeY={this.state.showCorner ? [0,10]:undefined }
                             signMap={this.state.currentBoard.signMap}
+                            markerMap={this.state.currentBoardMarks}
                             showCoordinates={true}
                             onVertexClick={ (evt, [x,y]) => {
                                 let index = this.state.index;
                                 let steps = this.state.steps;
+
+                                // карта отметок для текущих ходов
+                                let currentBoardMarks = [...Array(19)].map(() => Array(19));
+                                currentBoardMarks[y][x] = {type:'circle'};
+
                                 if (steps[index][0] === x &&
                                     steps[index][1] === y) {
                                     // правильный ответ
@@ -67,7 +74,8 @@ class App extends Component {
                                     this.setState({
                                         currentBoard: this.state.currentBoard.makeMove(sign, [x, y]),
                                         index,
-                                        sign: -sign
+                                        sign: -sign,
+                                        currentBoardMarks
                                     })
                                     if (index === steps.length) {
                                         setTimeout(() => {
@@ -98,6 +106,7 @@ class App extends Component {
                                     // сбрасываем состояние на начальное
                                     this.setState({
                                         currentBoard: this.state.initialBoard,
+                                        currentBoardMarks: [...Array(19)].map(() => Array(19)),
                                         index: 3,
                                         sign: -1,
                                         message: "Неверно!"

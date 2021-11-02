@@ -134,5 +134,9 @@ export function initializeJoseki(joseki_content) {
         sign = -sign;
     }
 
-    return {steps, index, sign, currentBoard, finalBoard};
+    // карта отметок для текущих ходов
+    let currentBoardMarks = [...Array(19)].map(() => Array(19));
+    currentBoardMarks[steps[2][1]][steps[2][0]] = {type:'circle'};
+
+    return {steps, index, sign, currentBoard, finalBoard, currentBoardMarks};
 }
