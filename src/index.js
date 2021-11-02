@@ -15,7 +15,10 @@ const content = [
 ];
 
 
-const branches = searchBranches(content);
+let branches = searchBranches(content);
+
+// перемешиваем джосеки
+branches = branches.sort(() => 0.5 - Math.random());
 
 const initialMessage = "Попытайся восстановить последовательность этого розыгрыша";
 
