@@ -48,7 +48,7 @@ class App extends Component {
         return (
             <div>
                 <div style={"margin:21px; font-size:large"}>{this.state.message}</div>
-                <div>
+                <div style={"display:flex"}>
                     <div style={"margin:10px"}>
                         <Goban
                             innerProps={oncontextmenu= evt=>evt.preventDefault()}
@@ -105,13 +105,18 @@ class App extends Component {
                                     // неправильный ответ
                                     // сбрасываем состояние на начальное
                                     this.setState({
+                                        currentBoard: this.state.currentBoard.makeMove(this.state.sign, [x, y]),
+                                        currentBoardMarks,
+                                        message: "Неверно!"
+                                    })
+                                    // после паузы устанавливаем начальное состояние
+                                    setTimeout(() => this.setState({
                                         currentBoard: this.state.initialBoard,
                                         currentBoardMarks: [...Array(19)].map(() => Array(19)),
                                         index: 3,
                                         sign: -1,
-                                        message: "Неверно!"
-                                    })
-                                    setTimeout(() => this.setState({message:initialMessage}), 1000);
+                                        message:initialMessage
+                                    }), 1000);
                                 }
                             }}
                         />
