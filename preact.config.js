@@ -13,12 +13,17 @@ export default
     {
         const webpack = require("webpack")
         let date_time = new Date();
-        let date_time_as_string = date_time.toDateString()
+        let date_time_as_string = date_time.toLocaleDateString()
 
         /** you can change the config here **/
-        config.plugins.push(                new webpack.DefinePlugin({
+        config.plugins.push(
+            new webpack.DefinePlugin({
                 build_time:JSON.stringify(date_time_as_string)
             })
         );
+
+        config.externals = {
+            fs: "null"
+        }
     }
 };
