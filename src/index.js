@@ -29,6 +29,7 @@ const constantState = {
     sign: -1, // цвет следующего камня (1 - чёрный, -1 - белый)
 };
 
+
 class App extends Component {
     constructor(props) {
         super(props);
@@ -136,6 +137,8 @@ class App extends Component {
                         />
                     </div>
                 </div>
+                {/* built_time вычисляется webpack-ом во время сборки */}
+                <div style={"position:fixed; bottom:0%"}>Собрано: {build_time}. Джосек в коллекции: {branches.length}</div>
             </div>
         );
     }
