@@ -13,6 +13,60 @@ const content = [
     "GM[1]FF[4]SZ[19];\n" +
     "B[dp];\n" +
     "W[fq](;B[cn];W[dq];B[cq];W[cr];B[eq];W[dr](;B[ep];W[er](;B[bq](;W[fp])(;W[hq]))(;B[fp];W[gq]))(;B[fp];W[er];B[ep];W[gq])(;B[er](;W[ep];B[fr];W[cp];B[do];W[bp];B[gq])(;W[cp];B[ep];W[co](;B[dn])(;B[do];W[bq];B[bo];W[bp](;B[dm])(;B[dn])))))(;B[hq];W[cq];B[dq];W[cp];B[do];W[dr];B[er];W[cr];B[fr];W[cn]))"
+    ,
+    "(;GM[1]FF[4]CA[UTF-8]AP[CGoban:3]ST[2]\n" +
+    "RU[Japanese]SZ[19]KM[0.00]\n" +
+    "PW[Белые]PB[Черные]\n" +
+    ";B[dp]\n" +
+    ";W[cq]\n" +
+    ";B[cp]\n" +
+    ";W[dq]\n" +
+    "(;B[ep]\n" +
+    ";W[eq]\n" +
+    ";B[fq]\n" +
+    ";W[fr]\n" +
+    ";B[bq]\n" +
+    ";W[br]\n" +
+    "(;B[er]\n" +
+    ";W[bp]\n" +
+    ";B[cr]\n" +
+    ";W[aq]\n" +
+    ";B[dr]\n" +
+    ";W[bq]\n" +
+    ";B[gr]\n" +
+    ";W[fp]\n" +
+    ";B[gq]\n" +
+    ";W[cn])\n" +
+    "(;B[gr]\n" +
+    ";W[bp]\n" +
+    "(;B[bo]\n" +
+    ";W[gq]\n" +
+    ";B[fp]\n" +
+    ";W[hr]\n" +
+    ";B[er]\n" +
+    ";W[gs]\n" +
+    ";B[cr]\n" +
+    ";W[aq]\n" +
+    ";B[dr]\n" +
+    ";W[bq])\n" +
+    "(;B[fp]\n" +
+    ";W[bo])\n" +
+    "(;B[gp]\n" +
+    ";W[fo]\n" +
+    ";B[fp]\n" +
+    ";W[bo])))\n" +
+    "(;B[eq]\n" +
+    ";W[er]\n" +
+    ";B[fr]\n" +
+    ";W[fq]\n" +
+    ";B[ep]\n" +
+    ";W[gr]\n" +
+    ";B[dr]\n" +
+    ";W[fs]\n" +
+    ";B[cr]\n" +
+    ";W[fp]\n" +
+    ";B[fo]\n" +
+    ";W[go]))\n"
 ];
 
 

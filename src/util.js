@@ -18,9 +18,9 @@ export function searchBranches(cnt)
 {
     let josekis = []; // каждая джосеки - это последовательность ходов Ч-Б-Ч-Б..., где каждый ход это объект {x,y}
 
-    let childToParentMap = new Map();
-
     for(let i = 0; i < cnt.length; ++i) {
+
+        let childToParentMap = new Map();
 
         let nodes = parse(cnt[i]);
 
