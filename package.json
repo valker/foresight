@@ -27,6 +27,7 @@
     "@sabaki/go-board": "^1.4.3",
     "@sabaki/sgf": "^3.4.7",
     "@sabaki/shudan": "^1.6.4",
+    "array-shuffle": "^3.0.0",
     "collect.js": "^4.29.0",
     "preact": "^10.1.0",
     "preact-render-to-string": "^5.1.2"

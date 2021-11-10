@@ -3,6 +3,7 @@ import './goban.css'
 import {Component, render} from "preact";
 import {Goban} from "@sabaki/shudan";
 import {initializeJoseki, searchBranches} from "./util.js"
+import arrayShuffle from 'array-shuffle';
 
 // просто пример джосек
 // в дальнейшем, надо придумать способ хранить их на сайте.. хотя..
@@ -18,7 +19,7 @@ const content = [
 let branches = searchBranches(content);
 
 // перемешиваем джосеки
-branches = branches.sort(() => 0.5 - Math.random());
+branches = arrayShuffle(branches);
 
 const initialMessage = "Попытайся восстановить последовательность этого розыгрыша";
 
