@@ -67,6 +67,21 @@ const content = [
     ";W[fp]\n" +
     ";B[fo]\n" +
     ";W[go]))\n"
+    ,
+    // joseki6.sgf
+    "(;GM[1]FF[4]CA[UTF-8]AP[CGoban:3]ST[2]\n" +
+    "RU[Japanese]SZ[19]KM[0.00]\n" +
+    "PW[Белые]PB[Черные]\n" +
+    ";B[dp]\n" +
+    ";W[fq]\n" +
+    ";B[fp]\n" +
+    ";W[gp]\n" +
+    ";B[fo]\n" +
+    ";W[dq]\n" +
+    ";B[cq]\n" +
+    ";W[eq]\n" +
+    ";B[cp]\n" +
+    ";W[jq])\n"
 ];
 
 
