@@ -85,7 +85,7 @@ const content = [
 ];
 
 
-let branches = searchBranches(content);
+let branches = searchBranches(content, 3);
 
 // перемешиваем джосеки
 branches = arrayShuffle(branches);
@@ -96,7 +96,6 @@ const constantState = {
     message: initialMessage,
     vertexSize: 32,
     showCorner: true,
-    sign: -1, // цвет следующего камня (1 - чёрный, -1 - белый)
 };
 
 
@@ -187,8 +186,8 @@ class App extends Component {
                                     setTimeout(() => this.setState({
                                         currentBoard: this.state.initialBoard,
                                         currentBoardMarks: [...Array(19)].map(() => Array(19)),
-                                        index: 3,
-                                        sign: -1,
+                                        index: this.state.firstMoves,
+                                        sign: this.state.firstMoves % 2 === 0 ? 1 : -1,
                                         message:initialMessage
                                     }), 1000);
                                 }

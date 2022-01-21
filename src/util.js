@@ -14,7 +14,7 @@ function traverse(node, fn)
     }
 }
 
-export function searchBranches(cnt)
+export function searchBranches(cnt, firstMoves)
 {
     let josekis = []; // каждая джосеки - это последовательность ходов Ч-Б-Ч-Б..., где каждый ход это объект {x,y}
 
@@ -45,6 +45,7 @@ export function searchBranches(cnt)
             path.reverse();
 
             let joseki = sgfToSteps(path);
+            joseki.firstMoves = firstMoves;
 
             josekis.push(joseki);
         }
@@ -119,6 +120,8 @@ export function initializeJoseki(joseki_content) {
     let index = 0;
     let sign = 1;
 
+    let firstMoves = joseki_content.firstMoves;
+
     // карта для финальной позиции
     let finalBoard = new Board([...Array(19)].map(() => Array(19).fill(0)));
 
@@ -126,7 +129,7 @@ export function initializeJoseki(joseki_content) {
     let currentBoard = new Board([...Array(19)].map(() => Array(19).fill(0)));
 
     for(let i = 0; i < steps.length; ++i) {
-        if(i < 3) {
+        if(i < firstMoves) {
             currentBoard = currentBoard.makeMove(sign, steps[i]);
             index++;
         }
@@ -136,7 +139,17 @@ export function initializeJoseki(joseki_content) {
 
     // карта отметок для текущих ходов
     let currentBoardMarks = [...Array(19)].map(() => Array(19));
-    currentBoardMarks[steps[2][1]][steps[2][0]] = {type:'circle'};
+    currentBoardMarks[steps[firstMoves-1][1]][steps[firstMoves-1][0]] = {type:'circle'};
 
-    return {steps, index, sign, currentBoard, finalBoard, currentBoardMarks};
+    sign = firstMoves % 2 === 0 ? 1 : -1;
+
+    return {
+        steps, // последовательность координат розыгрыша
+        index, // индекс в последовательности, указывающий на следующий ход
+        currentBoard, // доска где восстанавливаем розыгрыш
+        finalBoard,   // доска, где видна финальная позиция розыгрыша
+        currentBoardMarks, // отметка последнего хода кружком
+        firstMoves, // сколько ходов сделано в начальной позиции
+        sign
+    };
 }
