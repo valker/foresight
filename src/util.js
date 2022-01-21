@@ -63,7 +63,7 @@ const a_char_code = 'a'.charCodeAt(0);
  */
 function decodeCrdFromSgf(crd) {
     crd = crd.toString();
-    if (crd.length !== 2) throw "crd format is not SGF";
+    if (crd.length !== 2) return []; // пустой массив означает пас
     let x = crd.charCodeAt(0) - a_char_code;
     let y = 18 - (crd.charCodeAt(1) - a_char_code);
     return [x, y];

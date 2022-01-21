@@ -7,7 +7,7 @@ import arrayShuffle from 'array-shuffle';
 
 // просто пример джосек
 // в дальнейшем, надо придумать способ хранить их на сайте.. хотя..
-const content = [
+const content3 = [
     // сюда можно положить больше джосек
     "(;\n" +
     "GM[1]FF[4]SZ[19];\n" +
@@ -84,8 +84,63 @@ const content = [
     ";W[jq])\n"
 ];
 
+const content4 = [
+    "(;GM[1]FF[4]CA[UTF-8]AP[CGoban:3]ST[2]\n" +
+    "RU[Japanese]SZ[19]KM[0.00]\n" +
+    "PW[Белые]PB[Черные]\n" +
+    ";B[dq]\n" +
+    ";W[]\n" +
+    ";B[cn]\n" +
+    ";W[dp]\n" +
+    ";B[ep]\n" +
+    ";W[cq]\n" +
+    ";B[cp]\n" +
+    ";W[do]\n" +
+    ";B[co]\n" +
+    ";W[eq]\n" +
+    ";B[dr]\n" +
+    ";W[fp]\n" +
+    ";B[eo]\n" +
+    ";W[dn]\n" +
+    ";B[fq]\n" +
+    ";W[cm]\n" +
+    ";B[bm]\n" +
+    ";W[en]\n" +
+    ";B[er]\n" +
+    ";W[bl]\n" +
+    ";B[cl]\n" +
+    ";W[dm]\n" +
+    ";B[bn])\n",
 
-let branches = searchBranches(content, 3);
+    "(;GM[1]FF[4]CA[UTF-8]AP[CGoban:3]ST[2]\n" +
+    "RU[Japanese]SZ[19]KM[0.00]\n" +
+    "PW[Белые]PB[Черные]\n" +
+    ";B[dp]\n" +
+    ";W[]\n" +
+    ";B[fq]\n" +
+    ";W[bo]\n" +
+    ";B[bp]\n" +
+    ";W[cp]\n" +
+    ";B[co]\n" +
+    ";W[cq]\n" +
+    ";B[bq]\n" +
+    ";W[do]\n" +
+    ";B[cn]\n" +
+    ";W[dq]\n" +
+    ";B[ep]\n" +
+    ";W[bn]\n" +
+    ";B[cr]\n" +
+    ";W[dr]\n" +
+    ";B[br]\n" +
+    ";W[cm]\n" +
+    ";B[dn]\n" +
+    ";W[em])\n"
+];
+
+let branches = searchBranches(content3, 3);
+let branches4 = searchBranches(content4, 4);
+
+branches = branches.concat(branches4)
 
 // перемешиваем джосеки
 branches = arrayShuffle(branches);
