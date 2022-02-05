@@ -237,10 +237,13 @@ class App extends Component {
                                         currentBoardMarks,
                                         message: "Неверно!"
                                     })
+                                    let initialBoardMarks = [...Array(19)].map(() => Array(19));
+                                    let firstMoves = this.state.firstMoves;
+                                    initialBoardMarks[steps[firstMoves-1][1]][steps[firstMoves-1][0]] = {type:'circle'};
                                     // после паузы устанавливаем начальное состояние
                                     setTimeout(() => this.setState({
                                         currentBoard: this.state.initialBoard,
-                                        currentBoardMarks: [...Array(19)].map(() => Array(19)),
+                                        currentBoardMarks: initialBoardMarks,
                                         index: this.state.firstMoves,
                                         sign: this.state.firstMoves % 2 === 0 ? 1 : -1,
                                         message:initialMessage
