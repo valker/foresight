@@ -190,6 +190,13 @@ class App extends Component {
                                 let index = this.state.index;
                                 let steps = this.state.steps;
 
+                                if(this.state.currentBoard.signMap[y][x] !== 0)
+                                {
+                                    // не обрабатываем этот ход
+                                    console.log("ход в занятую точку");
+                                    return;
+                                }
+
                                 // карта отметок для текущих ходов
                                 let currentBoardMarks = [...Array(19)].map(() => Array(19));
                                 currentBoardMarks[y][x] = {type:'circle'};
