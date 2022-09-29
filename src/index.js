@@ -134,7 +134,8 @@ const content4 = [
     ";B[br]\n" +
     ";W[cm]\n" +
     ";B[dn]\n" +
-    ";W[em])\n"
+    ";W[em])\n",
+    "(;GM[1]FF[4]CA[UTF-8]AP[Sabaki:0.51.1]KM[6.5]SZ[19]DT[2022-09-29];B[dp];W[fq];B[];W[cq];B[dq];W[cp];B[do];W[dr];B[er];W[cr];B[fr];W[gq];B[iq];W[cn];B[gr])"
 ];
 
 let branches = searchBranches(content3, 3);
