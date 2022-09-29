@@ -1,6 +1,7 @@
 print(arg[1])
 
 local bucket = arg[1] == "ga" and "ga.56-studio.com" or "foresight.56-studio.com"
+bucket = "foresight" -- in yandex cloud
 
 print(bucket)
 
@@ -8,12 +9,12 @@ print(bucket)
 local lfs = require("lfs")
 
 os.execute("npm run build")
-os.execute("aws s3 sync ./build/ s3://" .. bucket .. " --delete --exclude *.js")
+os.execute("aws s3 sync ./build/ s3://" .. bucket .. " --delete --exclude *.js --endpoint-url=https://storage.yandexcloud.net")
 
 for fl in lfs.dir( "build" ) do
 	if string.match(fl, ".+\.js$") then
 		print(fl)
-		local command_line = "aws s3api put-object --bucket " .. bucket .. " --key " .. fl .. " --content-type text/javascript --body build/" .. fl
+		local command_line = "aws s3api put-object --bucket " .. bucket .. " --key " .. fl .. " --content-type text/javascript --endpoint-url=https://storage.yandexcloud.net --body build/" .. fl
 --		print(command_line)
 		os.execute( command_line )
 
