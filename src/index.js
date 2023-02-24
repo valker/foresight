@@ -5,9 +5,12 @@ import {Goban} from "@sabaki/shudan";
 import {initializeJoseki, searchBranches} from "./util.js"
 import arrayShuffle from 'array-shuffle';
 
+//const x = "(;GM[1]FF[4]SZ[19];B[dp];W[fq](;B[cn];W[dq];B[cq];W[cr];B[eq];W[dr](;B[ep];W[er](;B[bq](;W[fp])(;W[hq]))(;B[fp];W[gq]))(;B[fp];W[er];B[ep];W[gq])(;B[er](;W[ep];B[fr];W[cp];B[do];W[bp];B[gq])(;W[cp];B[ep];W[co](;B[dn])(;B[do];W[bq];B[bo];W[bp](;B[dm])(;B[dn])))))(;B[hq];W[cq];B[dq];W[cp];B[do];W[dr];B[er];W[cr];B[fr];W[cn]))";
+
+
 // просто пример джосек
 // в дальнейшем, надо придумать способ хранить их на сайте.. хотя..
-const content3 = [
+const content3_ = [
     // сюда можно положить больше джосек
     "(;\n" +
     "GM[1]FF[4]SZ[19];\n" +
