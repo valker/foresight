@@ -19,7 +19,7 @@ export default
         config.plugins.push(
             new webpack.DefinePlugin({
                 build_time:JSON.stringify(date_time_as_string),
-                content3: "(;GM[1]FF[4]SZ[19];B[dp];W[fq](;B[cn];W[dq];B[cq];W[cr];B[eq];W[dr](;B[ep];W[er](;B[bq](;W[fp])(;W[hq]))(;B[fp];W[gq]))(;B[fp];W[er];B[ep];W[gq])(;B[er](;W[ep];B[fr];W[cp];B[do];W[bp];B[gq])(;W[cp];B[ep];W[co](;B[dn])(;B[do];W[bq];B[bo];W[bp](;B[dm])(;B[dn])))))(;B[hq];W[cq];B[dq];W[cp];B[do];W[dr];B[er];W[cr];B[fr];W[cn]))"
+                content3_str: JSON.stringify("(;GM[1]FF[4]CA[UTF-8]AP[Sabaki:0.51.1]KM[7.5]SZ[19]DT[2023-02-25];B[dd];W[fc];B[cf];W[dc];B[cc];W[cb];B[ec];W[db];B[ed];W[eb])")
             })
         );
 

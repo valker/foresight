@@ -65,7 +65,7 @@ function decodeCrdFromSgf(crd) {
     crd = crd.toString();
     if (crd.length !== 2) return []; // пустой массив означает пас
     let x = crd.charCodeAt(0) - a_char_code;
-    let y = 18 - (crd.charCodeAt(1) - a_char_code);
+    let y = /*18 -*/ (crd.charCodeAt(1) - a_char_code);
     return [x, y];
 }
 

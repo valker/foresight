@@ -19,9 +19,9 @@
   "devDependencies": {
     "eslint": "^7.17.0",
     "eslint-config-preact": "^1.1.3",
-    "preact-cli": "^3.0.0",
-    "sirv-cli": "^1.0.3",
-    "mocha": "^9.1.3"
+    "mocha": "^9.1.3",
+    "preact-cli": "^3.4.5",
+    "sirv-cli": "^1.0.3"
   },
   "dependencies": {
     "@sabaki/go-board": "^1.4.3",
@@ -29,7 +29,7 @@
     "@sabaki/shudan": "^1.6.4",
     "array-shuffle": "^3.0.0",
     "collect.js": "^4.29.0",
-    "preact": "^10.1.0",
+    "preact": "^10.13.0",
     "preact-render-to-string": "^5.1.2"
   }
 }

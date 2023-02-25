@@ -87,6 +87,8 @@ const content3_ = [
     ";W[jq])\n"
 ];
 
+const content3 = [getContent3()];
+
 const content4 = [
     "(;GM[1]FF[4]CA[UTF-8]AP[CGoban:3]ST[2]\n" +
     "RU[Japanese]SZ[19]KM[0.00]\n" +
@@ -144,7 +146,7 @@ const content4 = [
 let branches = searchBranches(content3, 3);
 let branches4 = searchBranches(content4, 4);
 
-branches = branches.concat(branches4)
+//branches = branches.concat(branches4)
 
 // перемешиваем джосеки
 branches = arrayShuffle(branches);
@@ -280,6 +282,11 @@ class App extends Component {
             </div>
         );
     }
+}
+
+function getContent3()
+{
+    return  content3_str;
 }
 
 render(<App />, document.body);
