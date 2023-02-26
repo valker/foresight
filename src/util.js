@@ -153,3 +153,28 @@ export function initializeJoseki(joseki_content) {
         sign
     };
 }
+
+/**
+ * Возвращает массив из n элементов, случайно выбранных из массива arr с помощью генератора случайных чисел rnd
+ */
+export function getRandom(arr, n, rnd)
+{
+    var result = new Array(n),
+        len = arr.length,
+        taken = new Array(len);
+    if (n > len)
+        throw new RangeError("getRandom: more elements taken than available");
+    while (n--) {
+        var x = rnd.int(0, len - 1);
+        result[n] = arr[x in taken ? taken[x] : x];
+        taken[x] = --len in taken ? taken[len] : len;
+    }
+    return result;
+}
+
+export function getDateString()
+{
+    var date = new Date();
+    var localStr = date.toLocaleDateString("en-US");
+    return localStr;
+}

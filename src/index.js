@@ -2,8 +2,10 @@ import './style';
 import './goban.css'
 import {Component, render} from "preact";
 import {Goban} from "@sabaki/shudan";
-import {initializeJoseki, searchBranches} from "./util.js"
+import {initializeJoseki, searchBranches, getRandom, getDateString} from "./util.js"
 import arrayShuffle from 'array-shuffle';
+import random from 'random';
+import seedrandom from 'seedrandom'
 
 // содержимое джосек из файла
 const content3 = [getContent3()];
@@ -16,10 +18,17 @@ let branches4 = searchBranches(content4, 4);
 // объединяем ветви
 branches = branches.concat(branches4)
 
-// TODO: реализовать алгоритм выборки ветвей на основе рандома инициализированного текущей датой. и ограничить количество ветвей в день
+// число джосек в день
+const numberOfJosekiForOneDay = 5;
 
-// перемешиваем джосеки
-branches = arrayShuffle(branches);
+// зерно для генератора случайных чисел на основе текущей даты
+const randomSeed = getDateString();
+
+// инициализируем генератор
+random.use(seedrandom(randomSeed));
+
+// выбираем случайным образом нужное число джосек
+const selectedJosekis = getRandom(branches, numberOfJosekiForOneDay, random);
 
 const initialMessage = "Попытайся восстановить последовательность этого розыгрыша";
 
@@ -36,7 +45,7 @@ class App extends Component {
 
         let joseki_index = 0;
 
-        let initialState = initializeJoseki(branches[joseki_index]);
+        let initialState = initializeJoseki(selectedJosekis[joseki_index]);
 
         this.state = Object.assign({},
             initialState,
@@ -55,19 +64,18 @@ class App extends Component {
                 <div style={"display:flex"}>
                     <div style={"margin:10px"}>
                         <Goban
-                            innerProps={oncontextmenu= evt=>evt.preventDefault()}
+                            innerProps={oncontextmenu = evt => evt.preventDefault()}
                             vertexSize={this.state.vertexSize}
-                            rangeX={this.state.showCorner ? [0,10]:undefined }
-                            rangeY={this.state.showCorner ? [0,10]:undefined }
+                            rangeX={this.state.showCorner ? [0, 10] : undefined}
+                            rangeY={this.state.showCorner ? [0, 10] : undefined}
                             signMap={this.state.currentBoard.signMap}
                             markerMap={this.state.currentBoardMarks}
                             showCoordinates={true}
-                            onVertexClick={ (evt, [x,y]) => {
+                            onVertexClick={(evt, [x, y]) => {
                                 let index = this.state.index;
                                 let steps = this.state.steps;
 
-                                if(this.state.currentBoard.signMap[y][x] !== 0)
-                                {
+                                if (this.state.currentBoard.signMap[y][x] !== 0) {
                                     // не обрабатываем этот ход
                                     console.log("ход в занятую точку");
                                     return;
@@ -75,7 +83,7 @@ class App extends Component {
 
                                 // карта отметок для текущих ходов
                                 let currentBoardMarks = [...Array(19)].map(() => Array(19));
-                                currentBoardMarks[y][x] = {type:'circle'};
+                                currentBoardMarks[y][x] = {type: 'circle'};
 
                                 if (steps[index][0] === x &&
                                     steps[index][1] === y) {
@@ -90,21 +98,21 @@ class App extends Component {
                                     })
                                     if (index === steps.length) {
                                         setTimeout(() => {
-                                            this.setState({message:"Верно!"})
+                                            this.setState({message: "Верно!"})
                                             setTimeout(() => {
-                                                if(this.state.joseki_index < branches.length - 1) {
+                                                if (this.state.joseki_index < selectedJosekis.length - 1) {
                                                     let joseki_index = this.state.joseki_index + 1;
-                                                    let newState = initializeJoseki(branches[joseki_index]);
+                                                    let newState = initializeJoseki(selectedJosekis[joseki_index]);
                                                     this.setState(Object.assign({},
                                                         newState,
                                                         constantState,
                                                         {
                                                             joseki_index,
-                                                            message:"Следующая задача",
+                                                            message: "Следующая задача",
                                                             initialBoard: newState.currentBoard
                                                         }));
                                                     setTimeout(() => {
-                                                        this.setState({ message: initialMessage})
+                                                        this.setState({message: initialMessage})
                                                     }, 1000)
                                                 } else {
                                                     this.setState({message: "Задачи на сегодня закончились"});
@@ -122,14 +130,14 @@ class App extends Component {
                                     })
                                     let initialBoardMarks = [...Array(19)].map(() => Array(19));
                                     let firstMoves = this.state.firstMoves;
-                                    initialBoardMarks[steps[firstMoves-1][1]][steps[firstMoves-1][0]] = {type:'circle'};
+                                    initialBoardMarks[steps[firstMoves - 1][1]][steps[firstMoves - 1][0]] = {type: 'circle'};
                                     // после паузы устанавливаем начальное состояние
                                     setTimeout(() => this.setState({
                                         currentBoard: this.state.initialBoard,
                                         currentBoardMarks: initialBoardMarks,
                                         index: this.state.firstMoves,
                                         sign: this.state.firstMoves % 2 === 0 ? 1 : -1,
-                                        message:initialMessage
+                                        message: initialMessage
                                     }), 1000);
                                 }
                             }}
@@ -148,21 +156,20 @@ class App extends Component {
                     </div>
                 </div>
                 {/* built_time вычисляется webpack-ом во время сборки */}
-                <div style={"position:fixed; bottom:0%"}>Собрано: {build_time}. Джосек в коллекции: {branches.length}</div>
+                <div style={"position:fixed; bottom:0%"}>Собрано: {build_time}. Джосек в коллекции: {branches.length}.
+                    Джосек доступно в день: {numberOfJosekiForOneDay}</div>
             </div>
         );
     }
 }
 
-function getContent3()
-{
-    return  content3_str;
+function getContent3() {
+    return content3_str;
 }
 
 
-function getContent4()
-{
-    return  content4_str;
+function getContent4() {
+    return content4_str;
 }
 
-render(<App />, document.body);
+render(<App/>, document.body);

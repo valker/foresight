@@ -30,6 +30,7 @@
     "array-shuffle": "^3.0.0",
     "collect.js": "^4.29.0",
     "preact": "^10.13.0",
-    "preact-render-to-string": "^5.1.2"
+    "preact-render-to-string": "^5.1.2",
+    "random": "^4.1.0"
   }
 }
