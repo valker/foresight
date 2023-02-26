@@ -5,148 +5,18 @@ import {Goban} from "@sabaki/shudan";
 import {initializeJoseki, searchBranches} from "./util.js"
 import arrayShuffle from 'array-shuffle';
 
-//const x = "(;GM[1]FF[4]SZ[19];B[dp];W[fq](;B[cn];W[dq];B[cq];W[cr];B[eq];W[dr](;B[ep];W[er](;B[bq](;W[fp])(;W[hq]))(;B[fp];W[gq]))(;B[fp];W[er];B[ep];W[gq])(;B[er](;W[ep];B[fr];W[cp];B[do];W[bp];B[gq])(;W[cp];B[ep];W[co](;B[dn])(;B[do];W[bq];B[bo];W[bp](;B[dm])(;B[dn])))))(;B[hq];W[cq];B[dq];W[cp];B[do];W[dr];B[er];W[cr];B[fr];W[cn]))";
-
-
-// просто пример джосек
-// в дальнейшем, надо придумать способ хранить их на сайте.. хотя..
-const content3_ = [
-    // сюда можно положить больше джосек
-    "(;\n" +
-    "GM[1]FF[4]SZ[19];\n" +
-    "B[dp];\n" +
-    "W[fq](;B[cn];W[dq];B[cq];W[cr];B[eq];W[dr](;B[ep];W[er](;B[bq](;W[fp])(;W[hq]))(;B[fp];W[gq]))(;B[fp];W[er];B[ep];W[gq])(;B[er](;W[ep];B[fr];W[cp];B[do];W[bp];B[gq])(;W[cp];B[ep];W[co](;B[dn])(;B[do];W[bq];B[bo];W[bp](;B[dm])(;B[dn])))))(;B[hq];W[cq];B[dq];W[cp];B[do];W[dr];B[er];W[cr];B[fr];W[cn]))"
-    ,
-    "(;GM[1]FF[4]CA[UTF-8]AP[CGoban:3]ST[2]\n" +
-    "RU[Japanese]SZ[19]KM[0.00]\n" +
-    "PW[Белые]PB[Черные]\n" +
-    ";B[dp]\n" +
-    ";W[cq]\n" +
-    ";B[cp]\n" +
-    ";W[dq]\n" +
-    "(;B[ep]\n" +
-    ";W[eq]\n" +
-    ";B[fq]\n" +
-    ";W[fr]\n" +
-    ";B[bq]\n" +
-    ";W[br]\n" +
-    "(;B[er]\n" +
-    ";W[bp]\n" +
-    ";B[cr]\n" +
-    ";W[aq]\n" +
-    ";B[dr]\n" +
-    ";W[bq]\n" +
-    ";B[gr]\n" +
-    ";W[fp]\n" +
-    ";B[gq]\n" +
-    ";W[cn])\n" +
-    "(;B[gr]\n" +
-    ";W[bp]\n" +
-    "(;B[bo]\n" +
-    ";W[gq]\n" +
-    ";B[fp]\n" +
-    ";W[hr]\n" +
-    ";B[er]\n" +
-    ";W[gs]\n" +
-    ";B[cr]\n" +
-    ";W[aq]\n" +
-    ";B[dr]\n" +
-    ";W[bq])\n" +
-    "(;B[fp]\n" +
-    ";W[bo])\n" +
-    "(;B[gp]\n" +
-    ";W[fo]\n" +
-    ";B[fp]\n" +
-    ";W[bo])))\n" +
-    "(;B[eq]\n" +
-    ";W[er]\n" +
-    ";B[fr]\n" +
-    ";W[fq]\n" +
-    ";B[ep]\n" +
-    ";W[gr]\n" +
-    ";B[dr]\n" +
-    ";W[fs]\n" +
-    ";B[cr]\n" +
-    ";W[fp]\n" +
-    ";B[fo]\n" +
-    ";W[go]))\n"
-    ,
-    // joseki6.sgf
-    "(;GM[1]FF[4]CA[UTF-8]AP[CGoban:3]ST[2]\n" +
-    "RU[Japanese]SZ[19]KM[0.00]\n" +
-    "PW[Белые]PB[Черные]\n" +
-    ";B[dp]\n" +
-    ";W[fq]\n" +
-    ";B[fp]\n" +
-    ";W[gp]\n" +
-    ";B[fo]\n" +
-    ";W[dq]\n" +
-    ";B[cq]\n" +
-    ";W[eq]\n" +
-    ";B[cp]\n" +
-    ";W[jq])\n"
-];
-
+// содержимое джосек из файла
 const content3 = [getContent3()];
+const content4 = [getContent4()];
 
-const content4 = [
-    "(;GM[1]FF[4]CA[UTF-8]AP[CGoban:3]ST[2]\n" +
-    "RU[Japanese]SZ[19]KM[0.00]\n" +
-    "PW[Белые]PB[Черные]\n" +
-    ";B[dq]\n" +
-    ";W[]\n" +
-    ";B[cn]\n" +
-    ";W[dp]\n" +
-    ";B[ep]\n" +
-    ";W[cq]\n" +
-    ";B[cp]\n" +
-    ";W[do]\n" +
-    ";B[co]\n" +
-    ";W[eq]\n" +
-    ";B[dr]\n" +
-    ";W[fp]\n" +
-    ";B[eo]\n" +
-    ";W[dn]\n" +
-    ";B[fq]\n" +
-    ";W[cm]\n" +
-    ";B[bm]\n" +
-    ";W[en]\n" +
-    ";B[er]\n" +
-    ";W[bl]\n" +
-    ";B[cl]\n" +
-    ";W[dm]\n" +
-    ";B[bn])\n",
-
-    "(;GM[1]FF[4]CA[UTF-8]AP[CGoban:3]ST[2]\n" +
-    "RU[Japanese]SZ[19]KM[0.00]\n" +
-    "PW[Белые]PB[Черные]\n" +
-    ";B[dp]\n" +
-    ";W[]\n" +
-    ";B[fq]\n" +
-    ";W[bo]\n" +
-    ";B[bp]\n" +
-    ";W[cp]\n" +
-    ";B[co]\n" +
-    ";W[cq]\n" +
-    ";B[bq]\n" +
-    ";W[do]\n" +
-    ";B[cn]\n" +
-    ";W[dq]\n" +
-    ";B[ep]\n" +
-    ";W[bn]\n" +
-    ";B[cr]\n" +
-    ";W[dr]\n" +
-    ";B[br]\n" +
-    ";W[cm]\n" +
-    ";B[dn]\n" +
-    ";W[em])\n",
-    "(;GM[1]FF[4]CA[UTF-8]AP[Sabaki:0.51.1]KM[6.5]SZ[19]DT[2022-09-29];B[dp];W[fq];B[];W[cq];B[dq];W[cp];B[do];W[dr];B[er];W[cr];B[fr];W[gq];B[iq];W[cn];B[gr])"
-];
-
+// ищем ветви игры в содержимом джосек
 let branches = searchBranches(content3, 3);
 let branches4 = searchBranches(content4, 4);
 
-//branches = branches.concat(branches4)
+// объединяем ветви
+branches = branches.concat(branches4)
+
+// TODO: реализовать алгоритм выборки ветвей на основе рандома инициализированного текущей датой. и ограничить количество ветвей в день
 
 // перемешиваем джосеки
 branches = arrayShuffle(branches);
@@ -287,6 +157,12 @@ class App extends Component {
 function getContent3()
 {
     return  content3_str;
+}
+
+
+function getContent4()
+{
+    return  content4_str;
 }
 
 render(<App />, document.body);
