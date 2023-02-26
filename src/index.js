@@ -115,7 +115,7 @@ class App extends Component {
                                                         this.setState({message: initialMessage})
                                                     }, 1000)
                                                 } else {
-                                                    this.setState({message: "Задачи на сегодня закончились"});
+                                                    this.setState({message: "Задачи на сегодня закончились. Завтра будут новые."});
                                                 }
                                             }, 1000);
                                         }, 300);
