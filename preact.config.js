@@ -15,6 +15,7 @@ export default
         const fs = require('fs')
         const content3 = fs.readFileSync('src/josekis/content3.sgf').toString()
         const content4 = fs.readFileSync('src/josekis/content4.sgf').toString()
+        const content6 = fs.readFileSync('src/josekis/content6.sgf').toString()
         let date_time = new Date();
         let date_time_as_string = date_time.toLocaleDateString()
 
@@ -23,7 +24,8 @@ export default
             new webpack.DefinePlugin({
                 build_time:JSON.stringify(date_time_as_string),
                 content3_str: JSON.stringify(content3),
-                content4_str: JSON.stringify(content4)
+                content4_str: JSON.stringify(content4),
+                content6_str: JSON.stringify(content6)
             })
         );
 

@@ -10,13 +10,16 @@ import seedrandom from 'seedrandom'
 // содержимое джосек из файла
 const content3 = [getContent3()];
 const content4 = [getContent4()];
+const content6 = [getContent6()];
 
 // ищем ветви игры в содержимом джосек
 let branches = searchBranches(content3, 3);
 let branches4 = searchBranches(content4, 4);
+let branches6 = searchBranches(content6, 6);
 
 // объединяем ветви
 branches = branches.concat(branches4)
+branches = branches.concat(branches6)
 
 // число джосек в день
 const numberOfJosekiForOneDay = 5;
@@ -170,6 +173,10 @@ function getContent3() {
 
 function getContent4() {
     return content4_str;
+}
+
+function getContent6() {
+    return content6_str;
 }
 
 render(<App/>, document.body);
