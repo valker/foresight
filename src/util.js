@@ -157,7 +157,7 @@ export function initializeJoseki(joseki_content) {
 /**
  * Возвращает массив из n элементов, случайно выбранных из массива arr с помощью генератора случайных чисел rnd
  */
-export function getRandom(arr, n, rnd)
+export function chooseRandomBranches(arr, n, rnd)
 {
     var result = new Array(n),
         len = arr.length,
@@ -172,9 +172,15 @@ export function getRandom(arr, n, rnd)
     return result;
 }
 
-export function getDateString()
+/**
+ * Возвращает зерно инициализации для ГСЧ.
+ * Сейчас зависит от текущего часа
+ * @returns {string}
+ */
+export function getRandomSeed()
 {
-    var date = new Date();
-    var localStr = date.toLocaleDateString("en-US");
-    return localStr;
+    const millisecondsInSecond = 1000; // миллисекунд в секунде
+    const secondsInHour = 3600; // секунд в часе
+    return Math.floor(Date.now() / (millisecondsInSecond * secondsInHour))
+        .toString();
 }

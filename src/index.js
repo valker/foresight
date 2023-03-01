@@ -2,8 +2,7 @@ import './style';
 import './goban.css'
 import {Component, render} from "preact";
 import {Goban} from "@sabaki/shudan";
-import {initializeJoseki, searchBranches, getRandom, getDateString} from "./util.js"
-import arrayShuffle from 'array-shuffle';
+import {initializeJoseki, searchBranches, chooseRandomBranches, getRandomSeed} from "./util.js"
 import random from 'random';
 import seedrandom from 'seedrandom'
 
@@ -21,17 +20,17 @@ let branches6 = searchBranches(content6, 6);
 branches = branches.concat(branches4)
 branches = branches.concat(branches6)
 
-// число джосек в день
-const numberOfJosekiForOneDay = 5;
+// число джосек в за интервал
+const numberOfJosekiPerInterval = 5;
 
 // зерно для генератора случайных чисел на основе текущей даты
-const randomSeed = getDateString();
+const randomSeed = getRandomSeed();
 
 // инициализируем генератор
 random.use(seedrandom(randomSeed));
 
 // выбираем случайным образом нужное число джосек
-const selectedJosekis = getRandom(branches, numberOfJosekiForOneDay, random);
+const selectedJosekis = chooseRandomBranches(branches, numberOfJosekiPerInterval, random);
 
 const initialMessage = "Попытайся восстановить последовательность этого розыгрыша";
 
@@ -118,7 +117,7 @@ class App extends Component {
                                                         this.setState({message: initialMessage})
                                                     }, 1000)
                                                 } else {
-                                                    this.setState({message: "Задачи на сегодня закончились. Завтра будут новые."});
+                                                    this.setState({message: "Задачи закончились. Через час будут новые."});
                                                 }
                                             }, 1000);
                                         }, 300);
@@ -160,7 +159,7 @@ class App extends Component {
                 </div>
                 {/* built_time вычисляется webpack-ом во время сборки */}
                 <div style={"position:fixed; bottom:0%"}>Собрано: {build_time}. Джосек в коллекции: {branches.length}.
-                    Джосек доступно в день: {numberOfJosekiForOneDay}</div>
+                    Джосек в час: {numberOfJosekiPerInterval}</div>
             </div>
         );
     }
